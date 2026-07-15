@@ -1,0 +1,27 @@
+name: astrbot_plugin_pixiv_re
+display_name: Pixiv图床下载
+desc: 从Pixiv第三方图床(pixiv.re/pixiv.cat/)下载作品，支持单图直发和多图打包PDF/ZIP
+version: v1.0.0
+author: haexiao
+repo: https://github.com/haexiao/astrbot_plugin_pixiv_re
+astrbot_version: ">=4.8"
+support_platforms:
+  - aiocqhttp
+  - qq_official
+  - telegram
+  - wecom
+  - lark
+  - dingtalk
+  - kook
+  - qq_official_webhook
+  - wecom_ai_bot
+  - discord
+  - slack
+  - vocechat
+  - weixin_official_account
+  - weixin_oc
+  - satori
+  - misskey
+  - line
+  - matrix
+  - mattermost

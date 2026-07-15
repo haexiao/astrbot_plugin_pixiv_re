@@ -1,0 +1,28 @@
+{
+  "download_host": {
+    "description": "图床地址",
+    "type": "string",
+    "default": "https://pixiv.re",
+    "options": [
+      "https://pixiv.re",
+      "https://pixiv.cat",
+      "https://i.pixiv.re"
+    ]
+  },
+  "pack_format": {
+    "description": "多图打包格式",
+    "type": "string",
+    "default": "pdf",
+    "options": ["pdf", "zip"]
+  },
+  "save_local": {
+    "description": "是否在本地保存图片",
+    "type": "bool",
+    "default": false
+  },
+  "save_dir": {
+    "description": "本地图片保存目录",
+    "type": "string",
+    "default": "./downloads"
+  }
+}
