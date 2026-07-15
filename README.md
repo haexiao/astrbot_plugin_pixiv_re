@@ -27,9 +27,9 @@
 
 | 指令 | 说明 | 示例 |
 |------|------|------|
-| `/pixiv <作品ID>` | 下载指定作品，多图时使用默认打包格式 | `/pixiv 118908797` |
-| `/pixiv <作品ID> pdf` | 下载并打包为 PDF | `/pixiv 118908797 pdf` |
-| `/pixiv <作品ID> zip` | 下载并打包为 ZIP | `/pixiv 118908797 zip` |
+| `/pixiv <作品ID>` | 下载指定作品，低于免打包数量逐张发图，高于则打包 | `/pixiv 118908797` |
+| `/pixiv <作品ID> pdf` | 强制打包为 PDF | `/pixiv 118908797 pdf` |
+| `/pixiv <作品ID> zip` | 强制打包为 ZIP | `/pixiv 118908797 zip` |
 
 ### 返回示例
 
@@ -54,6 +54,7 @@
 | `pack_format` | string | `pdf` | 多图打包格式，可选：pdf / zip |
 | `save_local` | bool | `false` | 是否在本地保存图片/打包文件 |
 | `save_dir` | string | `./downloads` | 本地保存目录 |
+| `max_free_pack_count` | int | `10` | 多图最大免打包数量，低于此数逐张发图，高于则自动打包 |
 
 ## 常见问题
 

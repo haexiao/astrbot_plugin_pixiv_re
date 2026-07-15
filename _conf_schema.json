@@ -2,6 +2,7 @@
   "download_host": {
     "description": "图床地址",
     "type": "string",
+    "hint": "下载图片的第三方图床域名，不同图床的可用性和速度可能不同",
     "default": "https://pixiv.re",
     "options": [
       "https://pixiv.re",
@@ -12,17 +13,26 @@
   "pack_format": {
     "description": "多图打包格式",
     "type": "string",
+    "hint": "超过免打包数量时的打包格式。pdf为PDF文档，zip为ZIP压缩包",
     "default": "pdf",
     "options": ["pdf", "zip"]
   },
   "save_local": {
     "description": "是否在本地保存图片",
     "type": "bool",
+    "hint": "开启后图片和打包文件会同时保存到本地目录中",
     "default": false
   },
   "save_dir": {
     "description": "本地图片保存目录",
     "type": "string",
+    "hint": "图片和打包文件的本地保存路径，可使用相对路径或绝对路径",
     "default": "./downloads"
+  },
+  "max_free_pack_count": {
+    "description": "多图最大免打包数量",
+    "type": "int",
+    "hint": "多图低于此数量时直接逐张发送图片，高于此数量时自动打包发送。使用指令指定格式（如 /pixiv 123 pdf）可强制打包",
+    "default": 10
   }
 }

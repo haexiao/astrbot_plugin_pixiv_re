@@ -2,7 +2,7 @@
 Pixiv图床下载插件
 
 从Pixiv第三方图床(pixiv.re/pixiv.cat/i.pixiv.re)下载作品。
-单图直发JPG，多图打包PDF/ZIP发送，简洁无冗余信息。
+单图直发JPG，多图可逐张发送或打包PDF/ZIP发送。
 """
 import os
 import re
@@ -122,7 +122,8 @@ class PixivRePlugin(Star):
                 "/pixiv <作品ID> [打包格式]\n"
                 "示例：/pixiv 118908797\n"
                 "示例：/pixiv 118908797 zip\n"
-                "打包格式可选：pdf（默认）、zip"
+                "打包格式可选：pdf（默认）、zip\n"
+                "💡 多图时指定格式可强制打包，否则低于免打包数量时自动逐张发送"
             )
             return
 
@@ -131,15 +132,15 @@ class PixivRePlugin(Star):
             yield event.plain_result("❌ 作品ID必须是数字")
             return
 
-        # 可选：覆盖默认打包格式
-        pack_format = self.config.get("pack_format", "pdf")
-        if len(args) >= 3:
-            fmt = args[2].lower()
-            if fmt not in ("pdf", "zip"):
-                yield event.plain_result("❌ 打包格式仅支持 pdf 或 zip")
-                return
-            pack_format = fmt
+        # 判断用户是否在指令中指定了打包格式
+        has_pack_arg = len(args) >= 3 and args[2].lower() in ("pdf", "zip")
 
+        # 读取打包格式（仅在强制打包时使用）
+        pack_format = self.config.get("pack_format", "pdf")
+        if has_pack_arg:
+            pack_format = args[2].lower()
+
+        max_free = self.config.get("max_free_pack_count", 10)
         host = self.config.get("download_host", "https://pixiv.re").rstrip("/")
 
         try:
@@ -157,9 +158,17 @@ class PixivRePlugin(Star):
                     (save_dir / f"{illust_id}.jpg").write_bytes(resp.content)
 
                 yield event.image_result(img_url)
-            else:
-                # ---- 多图：全部下载后打包发送 ----
-                yield event.plain_result(f"⏳ 共 {page_count} 页，正在下载...")
+
+            elif has_pack_arg or page_count > max_free:
+                # ---- 强制打包 / 超出免打包数量 → 打包发送 ----
+                if has_pack_arg:
+                    yield event.plain_result(
+                        f"⏳ 共 {page_count} 页，正在打包为 {pack_format.upper()}..."
+                    )
+                else:
+                    yield event.plain_result(
+                        f"⏳ 共 {page_count} 页，超出免打包数量({max_free})，正在打包..."
+                    )
 
                 temp_dir = Path(tempfile.mkdtemp(prefix=f"pixiv_{illust_id}_"))
                 image_paths: list[Path] = []
@@ -180,7 +189,7 @@ class PixivRePlugin(Star):
                         img_path.write_bytes(img_data)
                         image_paths.append(img_path)
 
-                    # ---- 打包 ----
+                    # 打包
                     pack_path = temp_dir / f"{illust_id}.{pack_format}"
 
                     if pack_format == "pdf":
@@ -189,9 +198,11 @@ class PixivRePlugin(Star):
                         self._pack_zip(image_paths, pack_path)
 
                     if save_local:
-                        shutil.copy2(pack_path, save_dir / f"{illust_id}.{pack_format}")
+                        shutil.copy2(
+                            pack_path, save_dir / f"{illust_id}.{pack_format}"
+                        )
 
-                    # ---- 发送文件 ----
+                    # 发送文件
                     file_chain = MessageChain(
                         [
                             Comp.Plain(
@@ -207,6 +218,25 @@ class PixivRePlugin(Star):
 
                 finally:
                     shutil.rmtree(temp_dir, ignore_errors=True)
+
+            else:
+                # ---- 低于免打包数量 → 逐张发送 ----
+                yield event.plain_result(
+                    f"🖼️ 共 {page_count} 页，低于免打包数量({max_free})，逐张发送..."
+                )
+                save_local = self.config.get("save_local", False)
+                save_dir = self._get_save_dir()
+
+                for i in range(1, page_count + 1):
+                    img_url = f"{host}/{illust_id}-{i}.jpg"
+                    resp = await self.client.get(img_url)
+                    resp.raise_for_status()
+                    img_data = resp.content
+
+                    if save_local:
+                        (save_dir / f"{illust_id}-{i}.jpg").write_bytes(img_data)
+
+                    yield event.image_result(img_url)
 
         except httpx.HTTPStatusError as e:
             status = e.response.status_code
