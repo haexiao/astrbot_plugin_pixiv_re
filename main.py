@@ -177,6 +177,7 @@ class PixivRePlugin(Star):
                 image_paths: list[Path] = []
                 save_local = self.config.get("save_local", False)
                 save_dir = self._get_save_dir()
+                album_dir = save_dir / illust_id  # 按作品ID归档
 
                 try:
                     for i in range(1, page_count + 1):
@@ -187,7 +188,8 @@ class PixivRePlugin(Star):
                         img_data = resp.content
 
                         if save_local:
-                            (save_dir / f"{illust_id}-{i}.jpg").write_bytes(img_data)
+                            album_dir.mkdir(parents=True, exist_ok=True)
+                            (album_dir / f"{i}.jpg").write_bytes(img_data)
 
                         img_path = temp_dir / f"{illust_id}-{i}.jpg"
                         img_path.write_bytes(img_data)
@@ -202,8 +204,9 @@ class PixivRePlugin(Star):
                         self._pack_zip(image_paths, pack_path)
 
                     if save_local:
+                        album_dir.mkdir(parents=True, exist_ok=True)
                         shutil.copy2(
-                            pack_path, save_dir / f"{illust_id}.{pack_format}"
+                            pack_path, album_dir / f"{illust_id}.{pack_format}"
                         )
 
                     # 发送文件
@@ -230,6 +233,7 @@ class PixivRePlugin(Star):
                 )
                 save_local = self.config.get("save_local", False)
                 save_dir = self._get_save_dir()
+                album_dir = save_dir / illust_id  # 按作品ID归档
 
                 for i in range(1, page_count + 1):
                     logger.info(f"正在下载第 {i} 张图片，共 {page_count} 张")
@@ -239,7 +243,8 @@ class PixivRePlugin(Star):
                     img_data = resp.content
 
                     if save_local:
-                        (save_dir / f"{illust_id}-{i}.jpg").write_bytes(img_data)
+                        album_dir.mkdir(parents=True, exist_ok=True)
+                        (album_dir / f"{i}.jpg").write_bytes(img_data)
 
                     yield event.image_result(img_url)
 
