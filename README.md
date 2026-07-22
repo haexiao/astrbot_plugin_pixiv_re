@@ -1,5 +1,7 @@
 # AstrBot Pixiv 图床下载插件
 
+[![AstrBot Plugin Market](https://img.shields.io/badge/AstrBot-%E6%8F%92%E4%BB%B6%E5%B8%82%E5%9C%BA-blue)](https://docs.astrbot.app/dev/plugin-market/2026-06-27.html)
+
 适用于 AstrBot 的 Pixiv 第三方图床下载插件。支持单图直发和多图打包 PDF/ZIP 发送。
 
 ## 功能特性
