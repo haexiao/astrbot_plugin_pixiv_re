@@ -26,7 +26,7 @@
   "save_dir": {
     "description": "本地图片保存目录",
     "type": "string",
-    "hint": "图片和打包文件的本地保存路径，可使用相对路径或绝对路径",
+    "hint": "图片和打包文件的本地保存路径。使用相对路径（默认 ./downloads）时自动存到 data/plugin_data/ 安全区，重载插件不会丢失；使用绝对路径时直接存到指定位置",
     "default": "./downloads"
   },
   "max_free_pack_count": {

@@ -14,7 +14,7 @@ from pathlib import Path
 import astrbot.api.message_components as Comp
 from astrbot.api import AstrBotConfig, logger
 from astrbot.api.event import AstrMessageEvent, MessageChain, filter
-from astrbot.api.star import Context, Star, register
+from astrbot.api.star import Context, Star, StarTools, register
 import httpx
 
 
@@ -32,7 +32,10 @@ class PixivRePlugin(Star):
         super().__init__(context)
         self.config = config
         self.client: httpx.AsyncClient | None = None
-        logger.info("Pixiv图床下载插件已初始化")
+        # 获取插件数据目录（位于 data/plugin_data/ 下，重载插件不会丢失）
+        self.data_dir = StarTools.get_data_dir("astrbot_plugin_pixiv_re")
+        self.data_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Pixiv图床下载插件已初始化，数据目录: {self.data_dir}")
 
     async def initialize(self):
         """初始化：创建复用的 httpx 异步客户端"""
@@ -265,7 +268,8 @@ class PixivRePlugin(Star):
         """获取本地保存目录"""
         dir_str = self.config.get("save_dir", "./downloads")
         if not os.path.isabs(dir_str):
-            dir_str = str(Path(__file__).parent / dir_str)
+            # 相对路径 → 存到 plugin_data 安全区（重载插件不会丢失）
+            dir_str = str(self.data_dir / dir_str)
         path = Path(dir_str)
         path.mkdir(parents=True, exist_ok=True)
         return path
