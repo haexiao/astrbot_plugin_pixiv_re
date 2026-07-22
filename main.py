@@ -22,7 +22,7 @@ import httpx
     "astrbot_plugin_pixiv_re",
     "haexiao",
     "从Pixiv第三方图床下载作品，单图直发JPG，多图打包PDF/ZIP发送",
-    "1.0.0",
+    "1.1.0",
     "https://github.com/haexiao/astrbot_plugin_pixiv_re",
 )
 class PixivRePlugin(Star):
@@ -177,6 +177,7 @@ class PixivRePlugin(Star):
 
                 try:
                     for i in range(1, page_count + 1):
+                        logger.info(f"正在下载第 {i} 张图片，共 {page_count} 张")
                         img_url = f"{host}/{illust_id}-{i}.jpg"
                         resp = await self.client.get(img_url)
                         resp.raise_for_status()
@@ -228,6 +229,7 @@ class PixivRePlugin(Star):
                 save_dir = self._get_save_dir()
 
                 for i in range(1, page_count + 1):
+                    logger.info(f"正在下载第 {i} 张图片，共 {page_count} 张")
                     img_url = f"{host}/{illust_id}-{i}.jpg"
                     resp = await self.client.get(img_url)
                     resp.raise_for_status()
