@@ -21,7 +21,7 @@ import httpx
 @register(
     "astrbot_plugin_pixiv_re",
     "haexiao",
-    "从Pixiv第三方图床下载作品，单图直发JPG，多图打包PDF/ZIP发送",
+    "从Pixiv第三方图床下载作品，单图直发JPG，多图可逐张发送或打包PDF/ZIP发送",
     "1.1.0",
     "https://github.com/haexiao/astrbot_plugin_pixiv_re",
 )
