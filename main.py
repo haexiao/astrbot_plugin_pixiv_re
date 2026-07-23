@@ -152,6 +152,7 @@ class PixivRePlugin(Star):
 
             if page_count <= 1:
                 # ---- 单图：直接发送 JPG ----
+                logger.info(f"正在下载第 1 张图片，共 1 张")
                 img_url = f"{host}/{illust_id}.jpg"
                 resp = await self.client.get(img_url)
                 resp.raise_for_status()
