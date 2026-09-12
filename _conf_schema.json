@@ -1,14 +1,55 @@
 {
-  "download_host": {
-    "description": "图床地址",
+  "api_endpoint": {
+    "description": "作品信息接口地址",
     "type": "string",
-    "hint": "下载图片的第三方图床域名，不同图床的可用性和速度可能不同",
-    "default": "https://pixiv.re",
+    "hint": "获取作品页数与原图地址的接口。三个地址为同一套服务的镜像域名，默认 api.pixiv.cat；若该域名在你所在网络不可访问，可切换其他镜像或开启代理",
+    "default": "https://api.pixiv.cat/v1/generate",
     "options": [
-      "https://pixiv.re",
-      "https://pixiv.cat",
-      "https://i.pixiv.re"
+      "https://api.pixiv.cat/v1/generate",
+      "https://api.pixiv.re/v1/generate",
+      "https://api.pixiv.nl/v1/generate"
     ]
+  },
+  "image_proxy": {
+    "description": "图片下载域名",
+    "type": "string",
+    "hint": "下载图片使用的反代域名，与接口地址相互独立，哪个不可访问就换另一个。i.pixiv.re 与官方原图一致（推荐）；i.pixiv.nl 可用但图片可能被重新压缩；i.pixiv.cat 在部分网络环境下不可访问",
+    "default": "https://i.pixiv.re",
+    "options": [
+      "https://i.pixiv.re",
+      "https://i.pixiv.nl",
+      "https://i.pixiv.cat"
+    ]
+  },
+  "use_proxy": {
+    "description": "是否使用代理",
+    "type": "bool",
+    "hint": "网络无法直接访问图床接口或图片域名时可开启；开启后接口与图片下载都通过该代理",
+    "default": false
+  },
+  "proxy_url": {
+    "description": "代理服务器地址",
+    "type": "string",
+    "hint": "格式: http://host:port 或 socks5://host:port（如 http://127.0.0.1:7890）。仅在“是否使用代理”开启时生效",
+    "default": ""
+  },
+  "info_cache_ttl": {
+    "description": "作品信息缓存时间（秒）",
+    "type": "int",
+    "hint": "同一作品在此时间内重复请求会直接使用缓存，减少接口调用（接口有速率限制）。0 表示不缓存",
+    "default": 600
+  },
+  "max_pages": {
+    "description": "单次下载页数上限",
+    "type": "int",
+    "hint": "作品页数超过此值时不下发并给出提示，防止一次性下载过多图片。0 表示不限制",
+    "default": 200
+  },
+  "reuse_local_files": {
+    "description": "复用本地已保存的图片",
+    "type": "bool",
+    "hint": "开启后（需同时开启“是否在本地保存图片”）：若保存目录里已有该作品的全部图片，则直接发送不再重新下载，省流量；找不齐则照常重新下载",
+    "default": true
   },
   "pack_format": {
     "description": "多图打包格式",

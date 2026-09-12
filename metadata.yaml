@@ -1,7 +1,7 @@
 name: astrbot_plugin_pixiv_re
 display_name: Pixiv图床下载
 desc: 从Pixiv第三方图床下载作品，单图直发JPG，多图可逐张发送或打包PDF/ZIP发送
-version: 1.1.0
+version: 1.2.0
 author: haexiao
 tags:
   - pixiv
